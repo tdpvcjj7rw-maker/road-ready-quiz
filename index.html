@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>STRANDED: A Road Ready Adventure</title>
+<style>
+  :root {
+    --bg: #0b0d14;
+    --card: #151926;
+    --accent: #ffb703;
+    --good: #3ddc97;
+    --bad: #ff5d5d;
+    --text: #eef0f5;
+    --muted: #9aa2b1;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(circle at 50% -10%, #1a1f30, var(--bg) 60%);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100%;
+  }
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+  header .kicker {
+    letter-spacing: 3px;
+    font-size: 12px;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  header h1 {
+    font-size: 26px;
+    margin: 6px 0 0;
+    line-height: 1.2;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.06);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .scene-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .scene-text {
+    font-size: 17px;
+    line-height: 1.55;
+    margin-bottom: 22px;
+    white-space: pre-line;
+  }
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+  button.choice {
+    background: #1e2436;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.15s ease;
+    line-height: 1.4;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button.choice:active {
+    transform: scale(0.98);
+    background: #262e46;
+  }
+  .ending-card {
+    text-align: center;
+  }
+  .ending-emoji {
+    font-size: 48px;
+    margin-bottom: 6px;
+  }
+  .ending-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .ending-good .ending-title { color: var(--good); }
+  .ending-bad .ending-title { color: var(--bad); }
+  .ending-neutral .ending-title { color: var(--accent); }
+  .restart {
+    margin-top: 24px;
+    background: var(--accent);
+    color: #1a1300;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+  .restart:active { transform: scale(0.98); }
+  .start-screen {
+    text-align: center;
+  }
+  .start-screen p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 26px;
+  }
+  .go-btn {
+    background: var(--accent);
+    color: #1a1300;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+  }
+  .go-btn:active { transform: scale(0.98); }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">Road Ready</div>
+    <h1>STRANDED</h1>
+  </header>
+  <div id="card" class="card"></div>
+  <footer>Every choice leads somewhere. Choose carefully.</footer>
+</div>
+
+<script>
+const scenes = {
+  title: {
+    start: true,
+    title: "A Road Ready Adventure",
+    text: "It's Friday night. You're 9 miles from home on a dark back road, phone at low battery, when something goes wrong with the car.\n\nEvery choice below leads somewhere real. Follow it to the end.",
+    next: "s1"
+  },
+
+  s1: {
+    text: "A dashboard light flares red and the whole car shudders under you.",
+    choices: [
+      { label: "Ease off the gas, signal, and coast onto the shoulder", next: "s2" },
+      { label: "Gun it — you're almost home", next: "s1b" },
+      { label: "Crank the radio so you can't hear the noise", next: "s1b" },
+      { label: "Grab your phone to look up what the light means", next: "end_guardrail" }
+    ]
+  },
+  s1b: {
+    text: "The noise gets louder. Two miles later, something clunks and the car just dies — mid-lane, on a blind curve.",
+    choices: [ { label: "Keep going →", next: "s2b" } ]
+  },
+
+  s2: {
+    text: "You're stopped on the shoulder. Hazards still off.",
+    choices: [
+      { label: "Hazards on immediately, then pop the hood", next: "s3" },
+      { label: "Skip the hazards, hop out to look at the engine", next: "s2b" }
+    ]
+  },
+  s2b: {
+    text: "No shoulder, no hazards — cars are swerving around you at 50 mph.",
+    choices: [
+      { label: "Get fully off the road and get your hazards on, now", next: "s3" },
+      { label: "You've got places to be, deal with it where you are", next: "end_dead" }
+    ]
+  },
+
+  s3: {
+    text: "A pickup truck slows down alongside you. The guy leans out: \"You good? I got tools.\"",
+    choices: [
+      { label: "Thank him, ask him to hang back, and call a parent or roadside assistance yourself", next: "s4" },
+      { label: "Hop in to \"run and grab a part real quick\"", next: "end_escalated" },
+      { label: "Wave him off, you've got it", next: "s4" }
+    ]
+  },
+
+  s4: {
+    text: "Okay. What's actually wrong with the car?",
+    choices: [
+      { label: "Steam and a hot-metal smell", next: "s5" },
+      { label: "Thump-thump-thump, and it's pulling hard to one side", next: "s8" },
+      { label: "The key turns, and... nothing", next: "s11" }
+    ]
+  },
+
+  s5: {
+    text: "You pop the hood. Steam curls up into the night air.",
+    choices: [
+      { label: "Check the coolant reservoir", next: "s6" },
+      { label: "Check the oil dipstick instead — oil fixes everything", next: "s5b" }
+    ]
+  },
+  s5b: {
+    text: "Wrong guess. The engine keeps ticking angrily and your phone drops another 4%.",
+    choices: [ { label: "Keep going →", next: "s6" } ]
+  },
+  s6: {
+    text: "The coolant reservoir is bone dry.",
+    choices: [
+      { label: "Wait for the engine to fully cool before touching the radiator cap", next: "s7" },
+      { label: "Wrap a rag around your hand and crack the hot cap now — you're in a hurry", next: "end_tow" }
+    ]
+  },
+  s7: {
+    text: "Cooled down. Coolant topped off.",
+    choices: [
+      { label: "Start it, watch the temp gauge, and get it looked at tomorrow", next: "s20" },
+      { label: "Consider it permanently fixed — never think about it again", next: "s20" }
+    ]
+  },
+
+  s8: {
+    text: "It's a flat tire. Before you touch anything —",
+    choices: [
+      { label: "Get to flat, stable ground before doing anything else", next: "s9" },
+      { label: "Change it right where you stopped, hazards will cover you", next: "s8b" }
+    ]
+  },
+  s8b: {
+    text: "A side mirror clips your elbow as a truck roars past three feet away.",
+    choices: [ { label: "Keep going →", next: "s9" } ]
+  },
+  s9: {
+    text: "Jack, wrench, and spare are out. When do you loosen the lug nuts?",
+    choices: [
+      { label: "Crack them loose on the ground first, finish once it's jacked up", next: "s10" },
+      { label: "Wait until it's fully jacked up, then try", next: "s9b" }
+    ]
+  },
+  s9b: {
+    text: "The wheel just spins in place. You lower the car back down and start over — fifteen minutes gone.",
+    choices: [ { label: "Keep going →", next: "s10" } ]
+  },
+  s10: {
+    text: "Spare's on, nuts tightened in a star pattern. What's the plan?",
+    choices: [
+      { label: "Drive under 50 mph, get a real tire tomorrow", next: "s20" },
+      { label: "It's basically a real tire now, no rush", next: "end_tow" }
+    ]
+  },
+
+  s11: {
+    text: "Key turns. Nothing happens. A helper car and jumper cables show up.",
+    choices: [
+      { label: "Park close but not touching, both engines off", next: "s12" },
+      { label: "Hook up the cables with both engines running — faster that way", next: "s11b" }
+    ]
+  },
+  s11b: {
+    text: "Sparks jump off the terminal. Nobody's hurt, but your hands are shaking.",
+    choices: [ { label: "Keep going →", next: "s12" } ]
+  },
+  s12: {
+    text: "Cables in hand. What's the sequence?",
+    choices: [
+      { label: "Red → dead positive, red → good positive, black → good negative, black → bare metal on the dead car", next: "s13" },
+      { label: "Whatever order — cables don't care", next: "s12b" }
+    ]
+  },
+  s12b: {
+    text: "A pop and a wisp of smoke come off the battery. It still works. Barely.",
+    choices: [ { label: "Keep going →", next: "s13" } ]
+  },
+  s13: {
+    text: "The engine turns over. Now what?",
+    choices: [
+      { label: "Let it idle, then drive it around so the alternator actually recharges the battery", next: "s20" },
+      { label: "Disconnect and shut it off immediately — all done here", next: "s13b" }
+    ]
+  },
+  s13b: {
+    text: "Twenty minutes later, in your own driveway, it won't start again.",
+    choices: [ { label: "Keep going →", next: "s20" } ]
+  },
+
+  s20: {
+    text: "The car's running again. One decision left before you're home free.",
+    choices: [
+      { label: "Call a parent and tell them exactly what happened", next: "end_legend" },
+      { label: "Just drive home, no need to worry anyone", next: "end_home_safe" },
+      { label: "Drive home, and swing back to check on that other car you passed stranded on the way", next: "end_legend" }
+    ]
+  }
+};
+
+const endings = {
+  end_legend: {
+    tone: "good", emoji: "🏆", title: "LOCAL LEGEND",
+    text: "You roll in and tell the story at dinner, and it gets better every retelling. Your little brother now thinks you can perform roadside surgery on any car ever made. Canonically, you are Road Ready."
+  },
+  end_home_safe: {
+    tone: "good", emoji: "🚗", title: "HOME SAFE (BUT SHAKEN)",
+    text: "You made it. Nobody's hurt, nothing's on fire, and you've got a great story — as long as nobody asks too many follow-up questions about how long it actually took."
+  },
+  end_tow: {
+    tone: "neutral", emoji: "🛻", title: "THE TOW TRUCK KNOWS YOUR NAME",
+    text: "You're fine. The car is not. A flatbed hauls it off while you wait on the curb, $180 poorer, one very awkward conversation with your parents away from Road Ready."
+  },
+  end_dead: {
+    tone: "bad", emoji: "💀", title: "DEAD ON THE SHOULDER",
+    text: "The car's done — not \"oil change\" done, \"the mechanic laughed when he heard the story\" done. Two hours in the cold, a month of walking everywhere."
+  },
+  end_escalated: {
+    tone: "bad", emoji: "🚚", title: "WELL, THIS ESCALATED",
+    text: "\"Real quick\" turns into a 45-minute round trip to a guy's cousin's garage in the next county, three missed calls from your mom, and a story that starts with \"so this stranger's truck...\" You made it home. Eventually."
+  },
+  end_guardrail: {
+    tone: "bad", emoji: "📱", title: "GUARDRAIL",
+    text: "Two seconds looking down was all it took. Game over — no do-over on this one. It's the only ending in this whole thing that isn't funny. That's on purpose."
+  }
+};
+
+const card = document.getElementById('card');
+
+function renderTitle() {
+  const s = scenes.title;
+  card.innerHTML = `
+    <div class="start-screen">
+      <div class="ending-emoji">🚙</div>
+      <div class="ending-title" style="color: var(--accent)">${s.title}</div>
+      <p>${s.text}</p>
+      <button class="go-btn" id="startBtn">Start the Night</button>
+    </div>
+  `;
+  document.getElementById('startBtn').onclick = () => renderScene(s.next);
+}
+
+function renderScene(id) {
+  if (id.startsWith('end_')) return renderEnding(id);
+  const s = scenes[id];
+  const html = `
+    <div class="scene-text">${s.text}</div>
+    <div class="choices">
+      ${s.choices.map((c, i) => `<button class="choice" data-next="${c.next}">${c.label}</button>`).join('')}
+    </div>
+  `;
+  card.innerHTML = html;
+  card.querySelectorAll('.choice').forEach(btn => {
+    btn.onclick = () => renderScene(btn.getAttribute('data-next'));
+  });
+}
+
+function renderEnding(id) {
+  const e = endings[id];
+  card.innerHTML = `
+    <div class="ending-card ending-${e.tone}">
+      <div class="ending-emoji">${e.emoji}</div>
+      <div class="ending-title">${e.title}</div>
+      <div class="scene-text">${e.text}</div>
+      <button class="restart" id="restartBtn">Try Again</button>
+    </div>
+  `;
+  document.getElementById('restartBtn').onclick = renderTitle;
+}
+
+renderTitle();
+</script>
+</body>
+</html>
