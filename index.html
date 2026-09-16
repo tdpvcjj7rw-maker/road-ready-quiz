@@ -126,6 +126,19 @@
     width: 100%;
   }
   .restart:active { transform: scale(0.98); }
+  .secondary {
+    margin-top: 10px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  .secondary:active { transform: scale(0.98); }
   .start-screen {
     text-align: center;
   }
@@ -169,7 +182,7 @@
 const scenes = {
   title: {
     start: true,
-    title: "A Road Ready Adventure",
+    title: "Chapter 1: Stranded",
     text: "It's Friday night. You're 9 miles from home on a dark back road, phone at low battery, when something goes wrong with the car.\n\nEvery choice below leads somewhere real. Follow it to the end.",
     next: "s1"
   },
@@ -318,46 +331,239 @@ const scenes = {
       { label: "Just drive home, no need to worry anyone", next: "end_home_safe" },
       { label: "Drive home, and swing back to check on that other car you passed stranded on the way", next: "end_legend" }
     ]
+  },
+
+  c2_title: {
+    start: true,
+    title: "Chapter 2: The Long Way Home",
+    startLabel: "Hit the Road",
+    text: "Same night out, different trip. You're driving back from a weekend camping run, two hours from home on a rural highway, gear crammed in the trunk. New problems tonight — new choices.",
+    next: "c2_s1"
+  },
+  c2_s1: {
+    text: "Cell service is spotty out here, the sun's almost down, and something's about to go wrong.",
+    choices: [ { label: "Keep going →", next: "c2_s2" } ]
+  },
+  c2_s2: {
+    text: "What's the situation?",
+    choices: [
+      { label: "A loud BANG from the back of the car, and it starts pulling hard to one side", next: "c2_s3" },
+      { label: "The gas gauge has been sitting on E for ten miles, and the last sign said \"Next Services 40 Miles\"", next: "c2_s8" },
+      { label: "You stop to stretch, leave the car running with the doors shut, and hear a very specific click behind you", next: "c2_s12" },
+      { label: "It's a hot day — you pull into a gas station for one minute, dog's asleep in the back, you'll only be a second", next: "end_c2_notaminute" }
+    ]
+  },
+
+  c2_s3: {
+    text: "The back tire's blown out at highway speed. The car's pulling hard to one side.",
+    choices: [
+      { label: "Ease off the gas, don't brake, keep the wheel steady, let it slow on its own", next: "c2_s4" },
+      { label: "Slam the brakes", next: "c2_s3b" },
+      { label: "Try to hold highway speed long enough to reach the exit", next: "c2_s3b" }
+    ]
+  },
+  c2_s3b: {
+    text: "The back end snaps sideways. You fight the wheel straight while horns blare behind you — way too close.",
+    choices: [ { label: "Keep going →", next: "c2_s4" } ]
+  },
+  c2_s4: {
+    text: "You're slowing down. Where do you actually stop?",
+    choices: [
+      { label: "Keep it rolling slowly, hazards on, until you find a real shoulder wide enough to be safe", next: "c2_s5" },
+      { label: "Stop the second it feels okay, even if you're still half in the lane", next: "end_c2_bluelights" }
+    ]
+  },
+  c2_s5: {
+    text: "The trunk's packed with a cooler, two sleeping bags, and someone's tent poles. The spare and jack are in there somewhere.",
+    choices: [
+      { label: "Take five minutes to actually unpack and find the tools properly", next: "c2_s6" },
+      { label: "Try to wedge the jack out sideways without moving anything", next: "c2_s5b" }
+    ]
+  },
+  c2_s5b: {
+    text: "The jack slips at an angle and nearly dents the bumper before you catch it. You end up unpacking everything anyway.",
+    choices: [ { label: "Keep going →", next: "c2_s6" } ]
+  },
+  c2_s6: {
+    text: "The shoulder here slopes a little and the ground is loose gravel.",
+    choices: [
+      { label: "Find the flattest spot you can and chock the opposite wheel with a rock before jacking", next: "c2_s7" },
+      { label: "Just jack it up right where you stopped — gravel and slope, whatever", next: "c2_s6b" }
+    ]
+  },
+  c2_s6b: {
+    text: "Halfway up, the jack shifts on the loose gravel and the car lurches down an inch. Nobody's hurt, but everyone's heart stops.",
+    choices: [ { label: "Keep going →", next: "c2_s7" } ]
+  },
+  c2_s7: {
+    text: "Spare's on, gear's repacked. Time to get moving again.",
+    choices: [
+      { label: "Drive straight to a tire shop before putting real miles on that spare", next: "c2_s20" },
+      { label: "Spare feels fine, back up to highway speed, no rush", next: "end_c2_tempmeans" }
+    ]
+  },
+
+  c2_s8: {
+    text: "E for ten miles. The last sign said \"Next Services 40 Miles.\"",
+    choices: [
+      { label: "Ease off the gas, kill the AC, coast where it's safe, stretch every mile you can", next: "c2_s9" },
+      { label: "Keep your speed up and hope for the best", next: "c2_s8b" }
+    ]
+  },
+  c2_s8b: {
+    text: "The engine starts to stutter with about 12 miles still to go. You backed off too late.",
+    choices: [ { label: "Keep going →", next: "c2_s9" } ]
+  },
+  c2_s9: {
+    text: "It's not looking like you'll make it to a station.",
+    choices: [
+      { label: "Pull off safely now and call for a fuel delivery before you're fully stuck", next: "c2_s10" },
+      { label: "Keep pushing and see how far it gets", next: "c2_s9b" }
+    ]
+  },
+  c2_s9b: {
+    text: "It sputters out in a live lane with a semi closing in behind you. You just barely coast it onto the shoulder, inches to spare.",
+    choices: [ { label: "Keep going →", next: "c2_s10" } ]
+  },
+  c2_s10: {
+    text: "Empty tank, hazards on, camping gear in the trunk.",
+    choices: [
+      { label: "Call roadside or a parent, give them your exact mile marker, and wait it out", next: "c2_s11" },
+      { label: "Grab the empty gas can from the trunk and start walking the shoulder toward the exit", next: "end_c2_shoulderwalk" }
+    ]
+  },
+  c2_s11: {
+    text: "Help's bringing a gallon of gas. Where do you fill the can once it gets here?",
+    choices: [
+      { label: "Set the can on the ground, away from the car, before filling", next: "c2_s20" },
+      { label: "Fill it right in the trunk to save a step", next: "c2_s11b" }
+    ]
+  },
+  c2_s11b: {
+    text: "A small spark of static jumps as you're filling — no fire, just a jolt and a minor heart attack. You finish it on the ground, like you should have the first time.",
+    choices: [ { label: "Keep going →", next: "c2_s20" } ]
+  },
+
+  c2_s12: {
+    text: "You hear the click. The doors are locked. The car's still running.",
+    choices: [
+      { label: "Check your pockets before anything else — is the key actually on you?", next: "c2_s13" },
+      { label: "Yank on every door handle like it'll change something", next: "c2_s12b" }
+    ]
+  },
+  c2_s12b: {
+    text: "Every handle. Still locked. You could've just checked your pockets first.",
+    choices: [ { label: "Keep going →", next: "c2_s13" } ]
+  },
+  c2_s13: {
+    text: "The key's inside. The car's running. It's a warm night.",
+    choices: [
+      { label: "Call a parent or a lockout service and wait — the car can run itself dry, that's fine", next: "c2_s14" },
+      { label: "Find a wire hanger in a trash can and try to jimmy the door yourself", next: "c2_s13b" }
+    ]
+  },
+  c2_s13b: {
+    text: "You bend the hanger into something that looks official, jab at the lock for ten minutes, and achieve nothing but a scratched window seal.",
+    choices: [ { label: "Keep going →", next: "c2_s14" } ]
+  },
+  c2_s14: {
+    text: "Help is 25 minutes out. Your car is sitting there, running, unattended.",
+    choices: [
+      { label: "Stay right next to it so nobody thinks it's abandoned", next: "c2_s20" },
+      { label: "Walk inside for the bathroom and a snack — it's fine, it's just sitting there", next: "end_c2_grandtheft" }
+    ]
+  },
+
+  c2_s20: {
+    text: "Whatever tonight's emergency was, it's handled. One decision left.",
+    choices: [
+      { label: "Text the group chat the full, honest play-by-play", next: "end_c2_trailboss" },
+      { label: "Just get home, no need to relive it", next: "end_c2_home_midnight" },
+      { label: "Stop and help the next person you see stranded on the way", next: "end_c2_trailboss" }
+    ]
   }
 };
 
 const endings = {
   end_legend: {
     tone: "good", emoji: "🏆", title: "LOCAL LEGEND",
-    text: "You roll in and tell the story at dinner, and it gets better every retelling. Your little brother now thinks you can perform roadside surgery on any car ever made. Canonically, you are Road Ready."
+    text: "You roll in and tell the story at dinner, and it gets better every retelling. Your little brother now thinks you can perform roadside surgery on any car ever made. Canonically, you are Road Ready.",
+    restart: "title", advance: "c2_title"
   },
   end_home_safe: {
     tone: "good", emoji: "🚗", title: "HOME SAFE (BUT SHAKEN)",
-    text: "You made it. Nobody's hurt, nothing's on fire, and you've got a great story — as long as nobody asks too many follow-up questions about how long it actually took."
+    text: "You made it. Nobody's hurt, nothing's on fire, and you've got a great story — as long as nobody asks too many follow-up questions about how long it actually took.",
+    restart: "title", advance: "c2_title"
   },
   end_tow: {
     tone: "neutral", emoji: "🛻", title: "THE TOW TRUCK KNOWS YOUR NAME",
-    text: "You're fine. The car is not. A flatbed hauls it off while you wait on the curb, $180 poorer, one very awkward conversation with your parents away from Road Ready."
+    text: "You're fine. The car is not. A flatbed hauls it off while you wait on the curb, $180 poorer, one very awkward conversation with your parents away from Road Ready.",
+    restart: "title", advance: "c2_title"
   },
   end_dead: {
     tone: "bad", emoji: "💀", title: "DEAD ON THE SHOULDER",
-    text: "The car's done — not \"oil change\" done, \"the mechanic laughed when he heard the story\" done. Two hours in the cold, a month of walking everywhere."
+    text: "The car's done — not \"oil change\" done, \"the mechanic laughed when he heard the story\" done. Two hours in the cold, a month of walking everywhere.",
+    restart: "title", advance: "c2_title"
   },
   end_escalated: {
     tone: "bad", emoji: "🚚", title: "WELL, THIS ESCALATED",
-    text: "\"Real quick\" turns into a 45-minute round trip to a guy's cousin's garage in the next county, three missed calls from your mom, and a story that starts with \"so this stranger's truck...\" You made it home. Eventually."
+    text: "\"Real quick\" turns into a 45-minute round trip to a guy's cousin's garage in the next county, three missed calls from your mom, and a story that starts with \"so this stranger's truck...\" You made it home. Eventually.",
+    restart: "title", advance: "c2_title"
   },
   end_guardrail: {
     tone: "bad", emoji: "📱", title: "GUARDRAIL",
-    text: "Two seconds looking down was all it took. Game over — no do-over on this one. It's the only ending in this whole thing that isn't funny. That's on purpose."
+    text: "Two seconds looking down was all it took. Game over — no do-over on this one. It's the only ending in this whole thing that isn't funny. That's on purpose.",
+    restart: "title", advance: "c2_title"
+  },
+
+  end_c2_trailboss: {
+    tone: "good", emoji: "🏅", title: "TRAIL BOSS",
+    text: "You handled a real problem, on a real highway, with real gear you had to dig out of a trunk full of camping junk. By the time you're home, the story's already better than what actually happened — which is impressive, because what actually happened was already pretty good.",
+    restart: "c2_title"
+  },
+  end_c2_home_midnight: {
+    tone: "good", emoji: "🌙", title: "HOME BY MIDNIGHT",
+    text: "You made it back in one piece, gear and all. Nobody needs the play-by-play. You'll just quietly know you handled it, which might be the most mature ending available tonight.",
+    restart: "c2_title"
+  },
+  end_c2_bluelights: {
+    tone: "neutral", emoji: "🚨", title: "BLUE LIGHTS",
+    text: "A trooper pulls in behind you, lights going, before you've even got the jack out — you were still half in the lane. He's not writing a ticket, just delivering a very long lecture about the exit you could've made. It outlasts the actual tire change.",
+    restart: "c2_title"
+  },
+  end_c2_tempmeans: {
+    tone: "bad", emoji: "🔁", title: "TEMPORARY MEANS TEMPORARY",
+    text: "A spare is a \"get to a tire shop\" tire, not a \"back to 70 mph\" tire. It lets go twenty miles later — this time for real, this time with a tow truck and a much longer wait on the same stretch of highway.",
+    restart: "c2_title"
+  },
+  end_c2_shoulderwalk: {
+    tone: "bad", emoji: "🚶", title: "THE SHOULDER WALK",
+    text: "Walking a highway shoulder with a gas can gets you noticed — a trucker stops and drives you to the station and back, which is kind of him. It also means your parents watched your location crawl down the interstate on foot in real time. That conversation outlasts the walk.",
+    restart: "c2_title"
+  },
+  end_c2_grandtheft: {
+    tone: "bad", emoji: "🚗", title: "GRAND THEFT REST STOP",
+    text: "A running car with nobody in it is one of the easiest things in the world to steal. You come out with a snack to an empty parking spot. Police report, insurance claim, and a very quiet ride home in someone else's car.",
+    restart: "c2_title"
+  },
+  end_c2_notaminute: {
+    tone: "bad", emoji: "⏱️", title: "NOT EVEN A MINUTE",
+    text: "You're back in ninety seconds. On a hot day, a closed car doesn't need much longer than that to turn dangerous — for a pet or for a person. This isn't the ending with a funny lesson attached. Never leave anyone in a parked car. Not for a minute. Not with the windows cracked. Not \"just this once.\"",
+    restart: "c2_title"
   }
 };
 
 const card = document.getElementById('card');
 
-function renderTitle() {
-  const s = scenes.title;
+function renderTitle(id) {
+  id = id || 'title';
+  const s = scenes[id];
   card.innerHTML = `
     <div class="start-screen">
       <div class="ending-emoji">🚙</div>
       <div class="ending-title" style="color: var(--accent)">${s.title}</div>
       <p>${s.text}</p>
-      <button class="go-btn" id="startBtn">Start the Night</button>
+      <button class="go-btn" id="startBtn">${s.startLabel || 'Start the Night'}</button>
     </div>
   `;
   document.getElementById('startBtn').onclick = () => renderScene(s.next);
@@ -380,15 +586,24 @@ function renderScene(id) {
 
 function renderEnding(id) {
   const e = endings[id];
+  const advanceBtn = e.advance
+    ? `<button class="go-btn" id="advanceBtn">Continue to Chapter 2 →</button>`
+    : '';
+  const restartLabel = e.advance ? "Replay This Chapter" : "Play Again";
+  const restartClass = e.advance ? "secondary" : "restart";
   card.innerHTML = `
     <div class="ending-card ending-${e.tone}">
       <div class="ending-emoji">${e.emoji}</div>
       <div class="ending-title">${e.title}</div>
       <div class="scene-text">${e.text}</div>
-      <button class="restart" id="restartBtn">Try Again</button>
+      ${advanceBtn}
+      <button class="${restartClass}" id="restartBtn">${restartLabel}</button>
     </div>
   `;
-  document.getElementById('restartBtn').onclick = renderTitle;
+  if (e.advance) {
+    document.getElementById('advanceBtn').onclick = () => renderTitle(e.advance);
+  }
+  document.getElementById('restartBtn').onclick = () => renderTitle(e.restart);
 }
 
 renderTitle();
