@@ -113,6 +113,37 @@
   .ending-good .ending-title { color: var(--good); }
   .ending-bad .ending-title { color: var(--bad); }
   .ending-neutral .ending-title { color: var(--accent); }
+  .score-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .score-number {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-number span {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .score-tier {
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text);
+    margin: 8px 0 8px;
+  }
+  .score-blurb {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
   .restart {
     margin-top: 24px;
     background: var(--accent);
@@ -190,10 +221,10 @@ const scenes = {
   s1: {
     text: "A dashboard light flares red and the whole car shudders under you.",
     choices: [
-      { label: "Ease off the gas, signal, and coast onto the shoulder", next: "s2" },
-      { label: "Gun it — you're almost home", next: "s1b" },
-      { label: "Crank the radio so you can't hear the noise", next: "s1b" },
-      { label: "Grab your phone to look up what the light means", next: "end_guardrail" }
+      { label: "Ease off the gas, signal, and coast onto the shoulder", next: "s2", points: 10 },
+      { label: "Gun it — you're almost home", next: "s1b", points: 4 },
+      { label: "Crank the radio so you can't hear the noise", next: "s1b", points: 4 },
+      { label: "Grab your phone to look up what the light means", next: "end_guardrail", points: 0 }
     ]
   },
   s1b: {
@@ -204,24 +235,24 @@ const scenes = {
   s2: {
     text: "You're stopped on the shoulder. Hazards still off.",
     choices: [
-      { label: "Hazards on immediately, then pop the hood", next: "s3" },
-      { label: "Skip the hazards, hop out to look at the engine", next: "s2b" }
+      { label: "Hazards on immediately, then pop the hood", next: "s3", points: 10 },
+      { label: "Skip the hazards, hop out to look at the engine", next: "s2b", points: 4 }
     ]
   },
   s2b: {
     text: "No shoulder, no hazards — cars are swerving around you at 50 mph.",
     choices: [
-      { label: "Get fully off the road and get your hazards on, now", next: "s3" },
-      { label: "You've got places to be, deal with it where you are", next: "end_dead" }
+      { label: "Get fully off the road and get your hazards on, now", next: "s3", points: 10 },
+      { label: "You've got places to be, deal with it where you are", next: "end_dead", points: 0 }
     ]
   },
 
   s3: {
     text: "A pickup truck slows down alongside you. The guy leans out: \"You good? I got tools.\"",
     choices: [
-      { label: "Thank him, ask him to hang back, and call a parent or roadside assistance yourself", next: "s4" },
-      { label: "Hop in to \"run and grab a part real quick\"", next: "end_escalated" },
-      { label: "Wave him off, you've got it", next: "s4" }
+      { label: "Thank him, ask him to hang back, and call a parent or roadside assistance yourself", next: "s4", points: 10 },
+      { label: "Hop in to \"run and grab a part real quick\"", next: "end_escalated", points: 0 },
+      { label: "Wave him off, you've got it", next: "s4", points: 10 }
     ]
   },
 
@@ -237,8 +268,8 @@ const scenes = {
   s5: {
     text: "You pop the hood. Steam curls up into the night air.",
     choices: [
-      { label: "Check the coolant reservoir", next: "s6" },
-      { label: "Check the oil dipstick instead — oil fixes everything", next: "s5b" }
+      { label: "Check the coolant reservoir", next: "s6", points: 10 },
+      { label: "Check the oil dipstick instead — oil fixes everything", next: "s5b", points: 4 }
     ]
   },
   s5b: {
@@ -248,23 +279,23 @@ const scenes = {
   s6: {
     text: "The coolant reservoir is bone dry.",
     choices: [
-      { label: "Wait for the engine to fully cool before touching the radiator cap", next: "s7" },
-      { label: "Wrap a rag around your hand and crack the hot cap now — you're in a hurry", next: "end_tow" }
+      { label: "Wait for the engine to fully cool before touching the radiator cap", next: "s7", points: 10 },
+      { label: "Wrap a rag around your hand and crack the hot cap now — you're in a hurry", next: "end_tow", points: 0 }
     ]
   },
   s7: {
     text: "Cooled down. Coolant topped off.",
     choices: [
-      { label: "Start it, watch the temp gauge, and get it looked at tomorrow", next: "s20" },
-      { label: "Consider it permanently fixed — never think about it again", next: "s20" }
+      { label: "Start it, watch the temp gauge, and get it looked at tomorrow", next: "s20", points: 10 },
+      { label: "Consider it permanently fixed — never think about it again", next: "s20", points: 4 }
     ]
   },
 
   s8: {
     text: "It's a flat tire. Before you touch anything —",
     choices: [
-      { label: "Get to flat, stable ground before doing anything else", next: "s9" },
-      { label: "Change it right where you stopped, hazards will cover you", next: "s8b" }
+      { label: "Get to flat, stable ground before doing anything else", next: "s9", points: 10 },
+      { label: "Change it right where you stopped, hazards will cover you", next: "s8b", points: 4 }
     ]
   },
   s8b: {
@@ -274,8 +305,8 @@ const scenes = {
   s9: {
     text: "Jack, wrench, and spare are out. When do you loosen the lug nuts?",
     choices: [
-      { label: "Crack them loose on the ground first, finish once it's jacked up", next: "s10" },
-      { label: "Wait until it's fully jacked up, then try", next: "s9b" }
+      { label: "Crack them loose on the ground first, finish once it's jacked up", next: "s10", points: 10 },
+      { label: "Wait until it's fully jacked up, then try", next: "s9b", points: 4 }
     ]
   },
   s9b: {
@@ -285,16 +316,16 @@ const scenes = {
   s10: {
     text: "Spare's on, nuts tightened in a star pattern. What's the plan?",
     choices: [
-      { label: "Drive under 50 mph, get a real tire tomorrow", next: "s20" },
-      { label: "It's basically a real tire now, no rush", next: "end_tow" }
+      { label: "Drive under 50 mph, get a real tire tomorrow", next: "s20", points: 10 },
+      { label: "It's basically a real tire now, no rush", next: "end_tow", points: 0 }
     ]
   },
 
   s11: {
     text: "Key turns. Nothing happens. A helper car and jumper cables show up.",
     choices: [
-      { label: "Park close but not touching, both engines off", next: "s12" },
-      { label: "Hook up the cables with both engines running — faster that way", next: "s11b" }
+      { label: "Park close but not touching, both engines off", next: "s12", points: 10 },
+      { label: "Hook up the cables with both engines running — faster that way", next: "s11b", points: 4 }
     ]
   },
   s11b: {
@@ -304,8 +335,8 @@ const scenes = {
   s12: {
     text: "Cables in hand. What's the sequence?",
     choices: [
-      { label: "Red → dead positive, red → good positive, black → good negative, black → bare metal on the dead car", next: "s13" },
-      { label: "Whatever order — cables don't care", next: "s12b" }
+      { label: "Red → dead positive, red → good positive, black → good negative, black → bare metal on the dead car", next: "s13", points: 10 },
+      { label: "Whatever order — cables don't care", next: "s12b", points: 4 }
     ]
   },
   s12b: {
@@ -315,8 +346,8 @@ const scenes = {
   s13: {
     text: "The engine turns over. Now what?",
     choices: [
-      { label: "Let it idle, then drive it around so the alternator actually recharges the battery", next: "s20" },
-      { label: "Disconnect and shut it off immediately — all done here", next: "s13b" }
+      { label: "Let it idle, then drive it around so the alternator actually recharges the battery", next: "s20", points: 10 },
+      { label: "Disconnect and shut it off immediately — all done here", next: "s13b", points: 4 }
     ]
   },
   s13b: {
@@ -327,9 +358,9 @@ const scenes = {
   s20: {
     text: "The car's running again. One decision left before you're home free.",
     choices: [
-      { label: "Call a parent and tell them exactly what happened", next: "end_legend" },
-      { label: "Just drive home, no need to worry anyone", next: "end_home_safe" },
-      { label: "Drive home, and swing back to check on that other car you passed stranded on the way", next: "end_legend" }
+      { label: "Call a parent and tell them exactly what happened", next: "end_legend", points: 10 },
+      { label: "Just drive home, no need to worry anyone", next: "end_home_safe", points: 6 },
+      { label: "Drive home, and swing back to check on that other car you passed stranded on the way", next: "end_legend", points: 10 }
     ]
   },
 
@@ -347,19 +378,19 @@ const scenes = {
   c2_s2: {
     text: "What's the situation?",
     choices: [
-      { label: "A loud BANG from the back of the car, and it starts pulling hard to one side", next: "c2_s3" },
-      { label: "The gas gauge has been sitting on E for ten miles, and the last sign said \"Next Services 40 Miles\"", next: "c2_s8" },
-      { label: "You stop to stretch, leave the car running with the doors shut, and hear a very specific click behind you", next: "c2_s12" },
-      { label: "It's a hot day — you pull into a gas station for one minute, dog's asleep in the back, you'll only be a second", next: "end_c2_notaminute" }
+      { label: "A loud BANG from the back of the car, and it starts pulling hard to one side", next: "c2_s3", points: 10 },
+      { label: "The gas gauge has been sitting on E for ten miles, and the last sign said \"Next Services 40 Miles\"", next: "c2_s8", points: 10 },
+      { label: "You stop to stretch, leave the car running with the doors shut, and hear a very specific click behind you", next: "c2_s12", points: 10 },
+      { label: "It's a hot day — you pull into a gas station for one minute, dog's asleep in the back, you'll only be a second", next: "end_c2_notaminute", points: 0 }
     ]
   },
 
   c2_s3: {
     text: "The back tire's blown out at highway speed. The car's pulling hard to one side.",
     choices: [
-      { label: "Ease off the gas, don't brake, keep the wheel steady, let it slow on its own", next: "c2_s4" },
-      { label: "Slam the brakes", next: "c2_s3b" },
-      { label: "Try to hold highway speed long enough to reach the exit", next: "c2_s3b" }
+      { label: "Ease off the gas, don't brake, keep the wheel steady, let it slow on its own", next: "c2_s4", points: 10 },
+      { label: "Slam the brakes", next: "c2_s3b", points: 4 },
+      { label: "Try to hold highway speed long enough to reach the exit", next: "c2_s3b", points: 4 }
     ]
   },
   c2_s3b: {
@@ -369,15 +400,15 @@ const scenes = {
   c2_s4: {
     text: "You're slowing down. Where do you actually stop?",
     choices: [
-      { label: "Keep it rolling slowly, hazards on, until you find a real shoulder wide enough to be safe", next: "c2_s5" },
-      { label: "Stop the second it feels okay, even if you're still half in the lane", next: "end_c2_bluelights" }
+      { label: "Keep it rolling slowly, hazards on, until you find a real shoulder wide enough to be safe", next: "c2_s5", points: 10 },
+      { label: "Stop the second it feels okay, even if you're still half in the lane", next: "end_c2_bluelights", points: 0 }
     ]
   },
   c2_s5: {
     text: "The trunk's packed with a cooler, two sleeping bags, and someone's tent poles. The spare and jack are in there somewhere.",
     choices: [
-      { label: "Take five minutes to actually unpack and find the tools properly", next: "c2_s6" },
-      { label: "Try to wedge the jack out sideways without moving anything", next: "c2_s5b" }
+      { label: "Take five minutes to actually unpack and find the tools properly", next: "c2_s6", points: 10 },
+      { label: "Try to wedge the jack out sideways without moving anything", next: "c2_s5b", points: 4 }
     ]
   },
   c2_s5b: {
@@ -387,8 +418,8 @@ const scenes = {
   c2_s6: {
     text: "The shoulder here slopes a little and the ground is loose gravel.",
     choices: [
-      { label: "Find the flattest spot you can and chock the opposite wheel with a rock before jacking", next: "c2_s7" },
-      { label: "Just jack it up right where you stopped — gravel and slope, whatever", next: "c2_s6b" }
+      { label: "Find the flattest spot you can and chock the opposite wheel with a rock before jacking", next: "c2_s7", points: 10 },
+      { label: "Just jack it up right where you stopped — gravel and slope, whatever", next: "c2_s6b", points: 4 }
     ]
   },
   c2_s6b: {
@@ -398,16 +429,16 @@ const scenes = {
   c2_s7: {
     text: "Spare's on, gear's repacked. Time to get moving again.",
     choices: [
-      { label: "Drive straight to a tire shop before putting real miles on that spare", next: "c2_s20" },
-      { label: "Spare feels fine, back up to highway speed, no rush", next: "end_c2_tempmeans" }
+      { label: "Drive straight to a tire shop before putting real miles on that spare", next: "c2_s20", points: 10 },
+      { label: "Spare feels fine, back up to highway speed, no rush", next: "end_c2_tempmeans", points: 0 }
     ]
   },
 
   c2_s8: {
     text: "E for ten miles. The last sign said \"Next Services 40 Miles.\"",
     choices: [
-      { label: "Ease off the gas, kill the AC, coast where it's safe, stretch every mile you can", next: "c2_s9" },
-      { label: "Keep your speed up and hope for the best", next: "c2_s8b" }
+      { label: "Ease off the gas, kill the AC, coast where it's safe, stretch every mile you can", next: "c2_s9", points: 10 },
+      { label: "Keep your speed up and hope for the best", next: "c2_s8b", points: 4 }
     ]
   },
   c2_s8b: {
@@ -417,8 +448,8 @@ const scenes = {
   c2_s9: {
     text: "It's not looking like you'll make it to a station.",
     choices: [
-      { label: "Pull off safely now and call for a fuel delivery before you're fully stuck", next: "c2_s10" },
-      { label: "Keep pushing and see how far it gets", next: "c2_s9b" }
+      { label: "Pull off safely now and call for a fuel delivery before you're fully stuck", next: "c2_s10", points: 10 },
+      { label: "Keep pushing and see how far it gets", next: "c2_s9b", points: 4 }
     ]
   },
   c2_s9b: {
@@ -428,15 +459,15 @@ const scenes = {
   c2_s10: {
     text: "Empty tank, hazards on, camping gear in the trunk.",
     choices: [
-      { label: "Call roadside or a parent, give them your exact mile marker, and wait it out", next: "c2_s11" },
-      { label: "Grab the empty gas can from the trunk and start walking the shoulder toward the exit", next: "end_c2_shoulderwalk" }
+      { label: "Call roadside or a parent, give them your exact mile marker, and wait it out", next: "c2_s11", points: 10 },
+      { label: "Grab the empty gas can from the trunk and start walking the shoulder toward the exit", next: "end_c2_shoulderwalk", points: 0 }
     ]
   },
   c2_s11: {
     text: "Help's bringing a gallon of gas. Where do you fill the can once it gets here?",
     choices: [
-      { label: "Set the can on the ground, away from the car, before filling", next: "c2_s20" },
-      { label: "Fill it right in the trunk to save a step", next: "c2_s11b" }
+      { label: "Set the can on the ground, away from the car, before filling", next: "c2_s20", points: 10 },
+      { label: "Fill it right in the trunk to save a step", next: "c2_s11b", points: 4 }
     ]
   },
   c2_s11b: {
@@ -447,8 +478,8 @@ const scenes = {
   c2_s12: {
     text: "You hear the click. The doors are locked. The car's still running.",
     choices: [
-      { label: "Check your pockets before anything else — is the key actually on you?", next: "c2_s13" },
-      { label: "Yank on every door handle like it'll change something", next: "c2_s12b" }
+      { label: "Check your pockets before anything else — is the key actually on you?", next: "c2_s13", points: 10 },
+      { label: "Yank on every door handle like it'll change something", next: "c2_s12b", points: 4 }
     ]
   },
   c2_s12b: {
@@ -458,8 +489,8 @@ const scenes = {
   c2_s13: {
     text: "The key's inside. The car's running. It's a warm night.",
     choices: [
-      { label: "Call a parent or a lockout service and wait — the car can run itself dry, that's fine", next: "c2_s14" },
-      { label: "Find a wire hanger in a trash can and try to jimmy the door yourself", next: "c2_s13b" }
+      { label: "Call a parent or a lockout service and wait — the car can run itself dry, that's fine", next: "c2_s14", points: 10 },
+      { label: "Find a wire hanger in a trash can and try to jimmy the door yourself", next: "c2_s13b", points: 4 }
     ]
   },
   c2_s13b: {
@@ -469,17 +500,17 @@ const scenes = {
   c2_s14: {
     text: "Help is 25 minutes out. Your car is sitting there, running, unattended.",
     choices: [
-      { label: "Stay right next to it so nobody thinks it's abandoned", next: "c2_s20" },
-      { label: "Walk inside for the bathroom and a snack — it's fine, it's just sitting there", next: "end_c2_grandtheft" }
+      { label: "Stay right next to it so nobody thinks it's abandoned", next: "c2_s20", points: 10 },
+      { label: "Walk inside for the bathroom and a snack — it's fine, it's just sitting there", next: "end_c2_grandtheft", points: 0 }
     ]
   },
 
   c2_s20: {
     text: "Whatever tonight's emergency was, it's handled. One decision left.",
     choices: [
-      { label: "Text the group chat the full, honest play-by-play", next: "end_c2_trailboss" },
-      { label: "Just get home, no need to relive it", next: "end_c2_home_midnight" },
-      { label: "Stop and help the next person you see stranded on the way", next: "end_c2_trailboss" }
+      { label: "Text the group chat the full, honest play-by-play", next: "end_c2_trailboss", points: 10 },
+      { label: "Just get home, no need to relive it", next: "end_c2_home_midnight", points: 6 },
+      { label: "Stop and help the next person you see stranded on the way", next: "end_c2_trailboss", points: 10 }
     ]
   }
 };
@@ -553,7 +584,39 @@ const endings = {
   }
 };
 
+const ratingTiers = [
+  { max: 14, title: "PUBLIC HAZARD",
+    text: "You are a hazard to yourself and everyone around you. Go ahead and pick out a padded room now — you're going to be there a while." },
+  { max: 29, title: "BARELY VERTICAL",
+    text: "Somehow you're still standing. Nobody knows how. The car definitely doesn't." },
+  { max: 44, title: "CHAOS GREMLIN",
+    text: "You didn't cause every problem tonight, but you didn't prevent a single one either." },
+  { max: 59, title: "COIN FLIP ENERGY",
+    text: "Fifty-fifty. Technically passing. Technically." },
+  { max: 74, title: "GETTING THERE",
+    text: "You'd survive a real emergency — with a story that starts with \"okay, in my defense...\" at least twice." },
+  { max: 87, title: "SOLID CITIZEN",
+    text: "Calm, capable, mostly correct. Your parents can finally stop white-knuckling the passenger door handle." },
+  { max: 96, title: "CERTIFIED ROAD READY",
+    text: "You know exactly what you're doing. AAA should be cutting you a commission check." },
+  { max: 100, title: "THE MALE MARY POPPINS",
+    text: "Practically perfect in every way. Somewhere, a Scoutmaster is taking notes and feeling personally attacked." }
+];
+
+function getRating(pct) {
+  return ratingTiers.find(t => pct <= t.max);
+}
+
+let scoreEarned = 0;
+let scorePossible = 0;
+
 const card = document.getElementById('card');
+
+function startFresh(id) {
+  scoreEarned = 0;
+  scorePossible = 0;
+  renderTitle(id);
+}
 
 function renderTitle(id) {
   id = id || 'title';
@@ -575,17 +638,26 @@ function renderScene(id) {
   const html = `
     <div class="scene-text">${s.text}</div>
     <div class="choices">
-      ${s.choices.map((c, i) => `<button class="choice" data-next="${c.next}">${c.label}</button>`).join('')}
+      ${s.choices.map((c, i) => `<button class="choice" data-next="${c.next}" data-points="${c.points === undefined ? '' : c.points}">${c.label}</button>`).join('')}
     </div>
   `;
   card.innerHTML = html;
   card.querySelectorAll('.choice').forEach(btn => {
-    btn.onclick = () => renderScene(btn.getAttribute('data-next'));
+    btn.onclick = () => {
+      const pts = btn.getAttribute('data-points');
+      if (pts !== '') {
+        scorePossible += 10;
+        scoreEarned += Number(pts);
+      }
+      renderScene(btn.getAttribute('data-next'));
+    };
   });
 }
 
 function renderEnding(id) {
   const e = endings[id];
+  const pct = scorePossible > 0 ? Math.round((scoreEarned / scorePossible) * 100) : 100;
+  const rating = getRating(pct);
   const advanceBtn = e.advance
     ? `<button class="go-btn" id="advanceBtn">Continue to Chapter 2 →</button>`
     : '';
@@ -596,6 +668,11 @@ function renderEnding(id) {
       <div class="ending-emoji">${e.emoji}</div>
       <div class="ending-title">${e.title}</div>
       <div class="scene-text">${e.text}</div>
+      <div class="score-box">
+        <div class="score-number">${pct}<span>/100</span></div>
+        <div class="score-tier">${rating.title}</div>
+        <div class="score-blurb">${rating.text}</div>
+      </div>
       ${advanceBtn}
       <button class="${restartClass}" id="restartBtn">${restartLabel}</button>
     </div>
@@ -603,10 +680,10 @@ function renderEnding(id) {
   if (e.advance) {
     document.getElementById('advanceBtn').onclick = () => renderTitle(e.advance);
   }
-  document.getElementById('restartBtn').onclick = () => renderTitle(e.restart);
+  document.getElementById('restartBtn').onclick = () => startFresh(e.restart);
 }
 
-renderTitle();
+startFresh('title');
 </script>
 </body>
 </html>
